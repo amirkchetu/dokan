@@ -1,0 +1,5 @@
+[25-Apr-2015 21:44:14 Etc/GMT] PHP Fatal error:  Call to undefined function get_post_meta() in /home/shopwjdh/public_html/wp-content/plugins/dokan/templates/edit/sellin.php on line 4
+[25-Apr-2015 21:44:21 Etc/GMT] PHP Fatal error:  Call to undefined function get_post_meta() in /home/shopwjdh/public_html/wp-content/plugins/dokan/templates/edit/sellin.php on line 4
+[25-Apr-2015 21:45:28 Etc/GMT] PHP Fatal error:  Call to undefined function get_post_meta() in /home/shopwjdh/public_html/wp-content/plugins/dokan/templates/edit/sellin.php on line 4
+[25-Apr-2015 21:46:26 Etc/GMT] PHP Fatal error:  Call to a member function get_results() on a non-object in /home/shopwjdh/public_html/wp-content/plugins/dokan/templates/edit/sellin.php on line 6
+[25-Apr-2015 21:46:54 Etc/GMT] PHP Fatal error:  Call to a member function get_results() on a non-object in /home/shopwjdh/public_html/wp-content/plugins/dokan/templates/edit/sellin.php on line 7

@@ -58,6 +58,7 @@ if ( !defined( 'DOKAN_LOAD_SCRIPTS' ) ) {
     define( 'DOKAN_LOAD_SCRIPTS', true );
 }
 
+
 /**
  * Autoload class files on demand
  *
@@ -228,7 +229,7 @@ class WeDevs_Dokan {
         wp_register_script( 'dokan-popup', plugins_url( 'assets/js/jquery.magnific-popup.min.js', __FILE__ ), array( 'jquery' ), null, true );
         wp_register_script( 'bootstrap-tooltip', plugins_url( 'assets/js/bootstrap-tooltips.js', __FILE__ ), false, null, true );
         wp_register_script( 'form-validate', plugins_url( 'assets/js/form-validate.js', __FILE__ ), array( 'jquery' ), null, true  );
-
+		wp_register_script( 'jquery-steps', plugins_url( 'assets/js/jquery.steps.js', __FILE__ ), false, null, true );
         wp_register_script( 'dokan-script', plugins_url( 'assets/js/all.js', __FILE__ ), false, null, true );
         wp_register_script( 'dokan-product-shipping', plugins_url( 'assets/js/single-product-shipping.js', __FILE__ ), false, null, true );
     }
@@ -335,6 +336,7 @@ class WeDevs_Dokan {
                 wp_enqueue_script( 'jquery-chart' );
                 wp_enqueue_script( 'jquery-flot' );
                 wp_enqueue_script( 'chosen' );
+				wp_enqueue_script( 'jquery-steps' );
                 wp_enqueue_media();
                 wp_enqueue_script( 'dokan-popup' );
 

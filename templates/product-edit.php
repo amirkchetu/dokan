@@ -23,7 +23,7 @@ if ( isset( $_GET['product_id'] ) ) {
 if ( $post->post_author != $seller_id ) {
     wp_die( __( 'Access Denied', 'dokan' ) );
 }
-
+$mrp 					= get_post_meta( $post_id, '_list_price_mrp', true);
 $_regular_price         = get_post_meta( $post_id, '_regular_price', true );
 $_sale_price            = get_post_meta( $post_id, '_sale_price', true );
 $is_discount            = ( $_sale_price != '' ) ? true : false;
@@ -207,12 +207,21 @@ if ( ! $from_shortcode ) {
                                                 <input type="hidden" name="dokan_product_id" value="<?php echo $post_id; ?>">
                                                 <?php dokan_post_input_box( $post_id, 'post_title', array( 'placeholder' => 'Product name..', 'value' => $post->post_title ) ); ?>
                                             </div>
+                                            
+                                            <div class="show_if_simple dokan-clearfix">
+                                                <div class="dokan-form-group">
+                                                    <div class="dokan-input-group">
+                                                        <span class="dokan-input-group-addon">M.R.P. <?php echo get_woocommerce_currency_symbol(); ?></span>
+                                                        <?php dokan_post_input_box( $post_id, '_list_price_mrp', array( 'placeholder' => '9.99' ) ); ?>
+                                                    </div>
+                                                </div>
+                                            </div>
 
                                             <div class="show_if_simple dokan-clearfix">
                                                 <div class="dokan-form-group">
                                                     <div class="dokan-input-group">
-                                                        <span class="dokan-input-group-addon"><?php echo get_woocommerce_currency_symbol(); ?></span>
-                                                        <?php dokan_post_input_box( $post_id, '_regular_price', array( 'placeholder' => '0.00' ) ); ?>
+                                                        <span class="dokan-input-group-addon">List Price <?php echo get_woocommerce_currency_symbol(); ?></span>
+                                                        <?php dokan_post_input_box( $post_id, '_regular_price', array( 'placeholder' => '9.99' ) ); ?>
                                                     </div>
                                                 </div>
 
@@ -359,7 +368,7 @@ if ( ! $from_shortcode ) {
 								
 								<div id="product-sellin">
 
-                                    <?php dokan_get_template_part( '/edit/sellin.php' ); ?>
+                                    <?php dokan_get_template_part( 'edit/sellin' ); ?>
 
                                     <?php do_action( 'dokan_product_edit_after_sellin' ); ?>
 

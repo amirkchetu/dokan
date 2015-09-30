@@ -48,13 +48,20 @@
 
                             <div class="dokan-form-group">
                                 <div class="dokan-input-group">
-                                    <span class="dokan-input-group-addon"><?php echo get_woocommerce_currency_symbol(); ?></span>
-                                    <input class="dokan-form-control" name="price" id="product-price" type="text" placeholder="0.00" value="<?php echo dokan_posted_input( 'price' ); ?>">
+                                    <span class="dokan-input-group-addon">M.R.P. <?php echo get_woocommerce_currency_symbol(); ?></span>
+                                    <input class="dokan-form-control" name="mrp" id="product-price" type="text" placeholder="9.99" value="<?php echo dokan_posted_input( 'price' ); ?>">
+                                </div>
+                            </div>
+                            
+                            <div class="dokan-form-group">
+                                <div class="dokan-input-group">
+                                    <span class="dokan-input-group-addon">List Price <?php echo get_woocommerce_currency_symbol(); ?></span>
+                                    <input class="dokan-form-control" name="price" id="product-price" type="text" placeholder="9.99" value="<?php echo dokan_posted_input( 'price' ); ?>">
                                 </div>
                             </div>
 
                             <div class="dokan-form-group">
-                                <textarea name="post_excerpt" id="post-excerpt" rows="5" class="dokan-form-control" placeholder="<?php esc_attr_e( 'Short description about the product...', 'dokan' ); ?>"><?php echo dokan_posted_textarea( 'post_excerpt' ); ?></textarea>
+                                <textarea name="post_excerpt" id="post-excerpt" rows="5" class="dokan-form-control" placeholder="<?php esc_attr_e( 'Short description about the product...', 'dokan' ); ?>"><?php //echo dokan_posted_textarea( 'post_excerpt' ); ?></textarea>
                             </div>
 
                             <?php if ( dokan_get_option( 'product_category_style', 'dokan_selling', 'single' ) == 'single' ): ?>

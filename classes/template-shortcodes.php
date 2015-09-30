@@ -181,7 +181,7 @@ class Dokan_Template_Shortcodes {
 
         $errors = array();
         self::$product_cat  = -1;
-        self::$post_content = __( 'Details about your product...', 'dokan' );
+        self::$post_content = __( '', 'dokan' );
 
         if ( ! $_POST ) {
             return;
@@ -273,9 +273,16 @@ class Dokan_Template_Shortcodes {
 
 
                     update_post_meta( $product_id, '_regular_price', $price );
+                    update_post_meta( $product_id, '_list_price_mrp', $mrp);
                     update_post_meta( $product_id, '_sale_price', '' );
                     update_post_meta( $product_id, '_price', $price );
                     update_post_meta( $product_id, '_visibility', 'visible' );
+					$sell = array(
+						'sell_in' => '',
+						'state' => '',
+						'city' => ''
+					);
+					update_post_meta( $product_id, 'sell_in', $sell );
 
                     dokan_new_process_product_meta( $product_id );
 
@@ -362,6 +369,12 @@ class Dokan_Template_Shortcodes {
                     update_post_meta( $product_id, '_sale_price', '' );
                     update_post_meta( $product_id, '_price', $price );
                     update_post_meta( $product_id, '_visibility', 'visible' );
+                    $sell = array(
+                                'sell_in' => '',
+                                'state' => '',
+                                'city' => ''
+                        );
+                    update_post_meta( $product_id, 'sell_in', $sell );
 
                     do_action( 'dokan_new_product_added', $product_id, $post_data );
 

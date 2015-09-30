@@ -350,16 +350,16 @@ function dokan_get_dashboard_nav() {
             'icon'  => '<i class="fa fa-long-arrow-left"></i>',
             'url'   => dokan_get_navigation_url()
         ),
-        'store' => array(
+		'payment' => array(
+            'title' => __( 'Setup Agreement', 'dokan'),
+            'icon'  => '<i class="fa fa-credit-card"></i>',
+            'url'   => dokan_get_navigation_url( 'settings/payment' )
+        ),
+		'store' => array(
             'title' => __( 'Store', 'dokan'),
             'icon'  => '<i class="fa fa-university"></i>',
             'url'   => dokan_get_navigation_url( 'settings/store' )
         ),
-        'payment' => array(
-            'title' => __( 'Payment', 'dokan'),
-            'icon'  => '<i class="fa fa-credit-card"></i>',
-            'url'   => dokan_get_navigation_url( 'settings/payment' )
-        )
     );
 
     $dokan_shipping_option = get_option( 'woocommerce_dokan_product_shipping_settings' );

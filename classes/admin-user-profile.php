@@ -155,7 +155,7 @@ class Dokan_Admin_User_Profile {
 
             </tbody>
         </table>
-
+        <?php include('dokan-user-profile.php'); ?>
         <style type="text/css">
         .dokan-hide { display: none; }
         .button-area { padding-top: 100px; }
@@ -288,6 +288,16 @@ class Dokan_Admin_User_Profile {
                 }
             }
         }
+                //Custom
+		$store_settings['payment']['bank']['ac_name'] = sanitize_text_field( $_POST['dokan_account_name'] );
+		$store_settings['payment']['bank']['ac_number'] = sanitize_text_field( $_POST['dokan_account_number'] );
+		$store_settings['payment']['bank']['bank_name'] = sanitize_text_field( $_POST['dokan_bank_name'] );
+		$store_settings['payment']['bank']['bank_addr'] = sanitize_text_field( $_POST['dokan_bank_address'] );
+		$store_settings['payment']['bank']['swift'] = sanitize_text_field( $_POST['dokan_bank_ifsc'] );
+		$store_settings['legal_stat'] = sanitize_text_field( $_POST['dokan_legal_status'] );
+		$store_settings['pan_no'] = sanitize_text_field( $_POST['dokan_pan'] );
+		$store_settings['vat_no'] = sanitize_text_field( $_POST['dokan_vat'] );
+		$store_settings['bus_cat'] = sanitize_text_field( $_POST['dokan_bus_cat'] );
 
         update_user_meta( $user_id, 'dokan_profile_settings', $store_settings );
         update_user_meta( $user_id, 'dokan_enable_selling', $selling );

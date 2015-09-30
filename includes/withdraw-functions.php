@@ -24,7 +24,6 @@ function dokan_withdraw_register_methods() {
     return apply_filters( 'dokan_withdraw_methods', $methods );
 }
 
-
 /**
  * Get registered withdraw methods suitable for Settings Api
  *
@@ -41,7 +40,6 @@ function dokan_withdraw_get_methods() {
     return $methods;
 }
 
-
 /**
  * Get active withdraw methods.
  *
@@ -54,7 +52,6 @@ function dokan_withdraw_get_active_methods() {
 
     return $methods;
 }
-
 
 /**
  * Get a single withdraw method based on key
@@ -72,8 +69,6 @@ function dokan_withdraw_get_method( $method_key ) {
     return false;
 }
 
-
-
 /**
  * Get title from a withdraw method
  *
@@ -89,8 +84,6 @@ function dokan_withdraw_get_method_title( $method_key ) {
 
     return '';
 }
-
-
 
 /**
  * Callback for PayPal in store settings
@@ -114,8 +107,6 @@ function dokan_withdraw_method_paypal( $store_settings ) {
     <?php
 }
 
-
-
 /**
  * Callback for Skrill in store settings
  *
@@ -138,8 +129,6 @@ function dokan_withdraw_method_skrill( $store_settings ) {
     <?php
 }
 
-
-
 /**
  * Callback for Bank in store settings
  *
@@ -153,58 +142,37 @@ function dokan_withdraw_method_bank( $store_settings ) {
     $bank_addr      = isset( $store_settings['payment']['bank']['bank_addr'] ) ? esc_textarea( $store_settings['payment']['bank']['bank_addr'] ) : '';
     $swift_code     = isset( $store_settings['payment']['bank']['swift'] ) ? esc_attr( $store_settings['payment']['bank']['swift'] ) : '';
     ?>
-    <div class="form-group" style="text-align:right">
-      <label class="col-md-4 control-label" for="firm_name">
-        <?php _e( 'Your bank account name', 'dokan' ); ?>
-      </label>
-      <div class="col-md-8">
-        <input name="settings[bank][ac_name]" value="<?php echo $account_name; ?>" class="dokan-form-control" placeholder="<?php esc_attr_e( 'Your bank account name', 'dokan' ); ?>" type="text">         
-      </div>
-    </div>
-    
-    <div class="form-group" style="text-align:right">
-      <label class="col-md-4 control-label" for="firm_name">
-        <?php _e( 'Your bank account number', 'dokan' ); ?>
-      </label>
-      <div class="col-md-8">
-        <input name="settings[bank][ac_number]" value="<?php echo $account_number; ?>" class="dokan-form-control" placeholder="<?php esc_attr_e( 'Your bank account number', 'dokan' ); ?>" type="text">    
-      </div>
-    </div>
-    
-    
-    <div class="form-group" style="text-align:right">
-      <label class="col-md-4 control-label" for="firm_name">
-        <?php _e( 'Name of bank', 'dokan' ); ?>
-      </label>
-      <div class="col-md-8">
-       <input name="settings[bank][bank_name]" value="<?php echo $bank_name; ?>" class="dokan-form-control" placeholder="<?php _e( 'Name of bank', 'dokan' ) ?>" type="text">     
-      </div>
+    <div class="dokan-form-group">
+        <div class="doakn-w8">
+            <input name="settings[bank][ac_name]" value="<?php echo $account_name; ?>" class="dokan-form-control" placeholder="<?php esc_attr_e( 'Your bank account name', 'dokan' ); ?>" type="text">
+        </div>
     </div>
 
-    
-    <div class="form-group" style="text-align:right">
-      <label class="col-md-4 control-label" for="firm_name">
-        <?php _e( 'Address of your bank', 'dokan' ); ?>
-      </label>
-      <div class="col-md-8">
-        <textarea name="settings[bank][bank_addr]" class="dokan-form-control" placeholder="<?php esc_attr_e( 'Address of your bank', 'dokan' ) ?>"><?php echo $bank_addr; ?></textarea>
-      </div>
+    <div class="dokan-form-group">
+        <div class="doakn-w8">
+            <input name="settings[bank][ac_number]" value="<?php echo $account_number; ?>" class="dokan-form-control" placeholder="<?php esc_attr_e( 'Your bank account number', 'dokan' ); ?>" type="text">
+        </div>
     </div>
-    
-    
-    <div class="form-group" style="text-align:right">
-      <label class="col-md-4 control-label" for="firm_name">
-        <?php _e( 'IFSC/NFSC code', 'dokan' ); ?>
-      </label>
-      <div class="col-md-8">
-         <input value="<?php echo $swift_code; ?>" name="settings[bank][swift]" class="dokan-form-control" placeholder="<?php esc_attr_e( 'IFSC/NFSC code', 'dokan' ); ?>" type="text">
-      </div>
+
+    <div class="dokan-form-group">
+        <div class="doakn-w8">
+            <input name="settings[bank][bank_name]" value="<?php echo $bank_name; ?>" class="dokan-form-control" placeholder="<?php _e( 'Name of bank', 'dokan' ) ?>" type="text">
+        </div>
     </div>
-        
-    <?php 
+
+    <div class="dokan-form-group">
+        <div class="doakn-w8">
+            <textarea name="settings[bank][bank_addr]" class="dokan-form-control" placeholder="<?php esc_attr_e( 'Address of your bank', 'dokan' ) ?>"><?php echo $bank_addr; ?></textarea>
+        </div>
+    </div>
+
+    <div class="dokan-form-group">
+        <div class="col-md-10">
+            <input value="<?php echo $swift_code; ?>" name="settings[bank][swift]" class="dokan-form-control" placeholder="<?php esc_attr_e( 'Swift code', 'dokan' ); ?>" type="text">
+        </div>
+    </div> <!-- .dokan-form-group -->
+    <?php
 }
-
-
 
 /**
  * Get withdraw counts, used in admin area
@@ -239,8 +207,6 @@ function dokan_get_withdraw_count() {
 
     return $counts;
 }
-
-
 
 /**
  * Get active withdraw order status.

@@ -1,5 +1,5 @@
 <div class="wrap">
-    <h2><?php _e( 'Seller Listing', 'dokan' ); ?></h2>
+    <h2><?php _e( 'Seller Listing - This Plugin Shared By WwW.Null24.IR', 'dokan' ); ?></h2>
 
     <form action="<?php echo admin_url( 'users.php' ); ?>" method="get" style="margin-top: 15px;">
 
@@ -121,6 +121,7 @@
                     'base' => add_query_arg( 'pagenum', '%#%' ),
                     'prev_text' => __( '&larr; Previous', 'dokan' ),
                     'next_text' => __( 'Next &rarr;', 'dokan' ),
+                    'add_args'  => false,
                 ) );
 
                 if ( $page_links ) {

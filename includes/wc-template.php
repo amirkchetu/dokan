@@ -52,6 +52,7 @@ function dokan_product_seller_tab( $val ) {
     $author     = get_user_by( 'id', $product->post->post_author );
     $store_info = dokan_get_store_info( $author->ID );
     ?>
+    <h2><?php _e( 'Seller Information', 'dokan' ); ?></h2>
     <ul class="list-unstyled">
 
         <?php if ( !empty( $store_info['store_name'] ) ) { ?>
@@ -74,9 +75,9 @@ function dokan_product_seller_tab( $val ) {
         </li>
         <?php if ( !empty( $store_info['address'] ) ) { ?>
             <li class="store-address">
-                <span><?php _e( 'Address:', 'dokan' ); ?></span>
+                <span><b><?php _e( 'Address:', 'dokan' ); ?></b></span>
                 <span class="details">
-                    <?php echo esc_html( $store_info['address'] ); ?>
+                    <?php echo dokan_get_seller_address( $author->ID ) ?>
                 </span>
             </li>
         <?php } ?>
@@ -186,3 +187,17 @@ function dokan_get_no_seller_image() {
 
     return apply_filters( 'dokan_no_seller_image', $image );
 }
+
+/**
+ * Override Customer Orders array
+ * 
+ * @param post_arg_query array()
+ * 
+ * @return array() post_arg_query
+ */
+function dokan_get_customer_main_order( $customer_orders ) {
+    $customer_orders['post_parent'] = 0;
+    return $customer_orders;
+}
+
+add_filter( 'woocommerce_my_account_my_orders_query', 'dokan_get_customer_main_order');

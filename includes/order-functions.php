@@ -6,7 +6,7 @@
  * @param int $seller_id
  * @return array
  */
-function dokan_get_seller_orders( $seller_id, $status = 'all', $limit = 10, $offset = 0 ) {
+function dokan_get_seller_orders( $seller_id, $status = 'all', $order_date = NULL, $limit = 10, $offset = 0 ) {
     global $wpdb;
 
     $cache_key = 'dokan-seller-orders-' . $status . '-' . $seller_id;
@@ -14,13 +14,14 @@ function dokan_get_seller_orders( $seller_id, $status = 'all', $limit = 10, $off
 
     if ( $orders === false ) {
         $status_where = ( $status == 'all' ) ? '' : $wpdb->prepare( ' AND order_status = %s', $status );
-
+        $date_query = ( $order_date ) ? $wpdb->prepare( ' AND DATE( p.post_date ) = %s', $order_date ) : '';
         $sql = "SELECT do.order_id, p.post_date
                 FROM {$wpdb->prefix}dokan_orders AS do
                 LEFT JOIN $wpdb->posts p ON do.order_id = p.ID
                 WHERE
                     do.seller_id = %d AND
                     p.post_status != 'trash'
+                    $date_query
                     $status_where
                 GROUP BY do.order_id
                 ORDER BY p.post_date DESC
@@ -236,18 +237,26 @@ function dokan_delete_sync_order( $order_id ) {
 function dokan_sync_insert_order( $order_id ) {
     global $wpdb;
 
-    $order        = new WC_Order( $order_id );
-    $seller_id    = dokan_get_seller_id_by_order( $order_id );
-    $percentage   = dokan_get_seller_percentage( $seller_id );
-    $order_total  = $order->get_total();
-    $order_status = $order->post_status;
+    $order          = new WC_Order( $order_id );
+    $seller_id      = dokan_get_seller_id_by_order( $order_id );
+    $percentage     = dokan_get_seller_percentage( $seller_id );
+
+    $order_total    = $order->get_total();
+    $order_shipping = $order->get_total_shipping();
+    $order_tax      = $order->get_total_tax();
+    $extra_cost     = $order_shipping + $order_tax;
+    $order_cost     = $order_total - $extra_cost;
+    $order_status   = $order->post_status;
+
+    $net_amount     = ( ( $order_cost * $percentage ) / 100 ) + $extra_cost;
+    $net_amount     = apply_filters( 'dokan_order_net_amount', $net_amount, $order );
 
     $wpdb->insert( $wpdb->prefix . 'dokan_orders',
         array(
             'order_id'     => $order_id,
             'seller_id'    => $seller_id,
             'order_total'  => $order_total,
-            'net_amount'   => ($order_total * $percentage)/100,
+            'net_amount'   => $net_amount,
             'order_status' => $order_status,
         ),
         array(
@@ -336,4 +345,28 @@ function dokan_get_order_status_class( $status ) {
             return 'danger';
             break;
     }
+}
+
+/**
+ * Get product items list from order
+ *
+ * @since 1.4
+ *
+ * @param  object $order
+ * @param  string $glue
+ *
+ * @return string list of products
+ */
+function dokan_get_product_list_by_order( $order, $glue = ',' ) {
+
+    $product_list = '';
+    $order_item   = $order->get_items();
+
+    foreach( $order_item as $product ) {
+        $prodct_name[] = $product['name'];
+    }
+
+    $product_list = implode( $glue, $prodct_name );
+
+    return $product_list;
 }

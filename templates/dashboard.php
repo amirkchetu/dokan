@@ -12,11 +12,10 @@ $reviews_url    = dokan_get_navigation_url( 'reviews' );
 ?>
 
 <div class="dokan-dashboard-wrap">
-
     <?php dokan_get_template( 'dashboard-nav.php', array( 'active_menu' => 'dashboard' ) ); ?>
 
     <div class="dokan-dashboard-content">
-		
+
         <?php
         if ( ! dokan_is_seller_enabled( $user_id ) ) {
             dokan_seller_not_enabled_notice();
@@ -24,7 +23,7 @@ $reviews_url    = dokan_get_navigation_url( 'reviews' );
         ?>
 
         <article class="dashboard-content-area">
-
+            <?php echo dokan_get_profile_progressbar(); ?>
             <div class="dokan-w6 dokan-dash-left">
                 <div class="dashboard-widget big-counter">
                     <ul class="list-inline">
@@ -45,11 +44,18 @@ $reviews_url    = dokan_get_navigation_url( 'reviews' );
                             <div class="title"><?php _e( 'Sales', 'dokan' ); ?></div>
                             <div class="count"><?php echo woocommerce_price( $earning ); ?></div>
                         </li>
+                        <li>
+                            <div class="title"><?php _e( 'Earning', 'dokan' ); ?></div>
+                            <div class="count"><?php echo dokan_get_seller_balance( $user_id ); ?></div>
+                        </li>
+
+                        <?php do_action( 'dokan_seller_dashboard_widget_counter' ); ?>
+
                     </ul>
                 </div> <!-- .big-counter -->
 
                 <div class="dashboard-widget orders">
-                    <div class="widget-title"><i class="fa fa-shopping-cart"></i> Orders</div>
+                    <div class="widget-title"><i class="fa fa-shopping-cart"></i> <?php _e( 'Orders', 'dokan' ); ?></div>
 
                     <?php
                     $order_data = array(
@@ -107,7 +113,7 @@ $reviews_url    = dokan_get_navigation_url( 'reviews' );
                 </div> <!-- .orders -->
 
                 <div class="dashboard-widget reviews">
-                    <div class="widget-title"><i class="fa fa-comments"></i> Reviews</div>
+                    <div class="widget-title"><i class="fa fa-comments"></i> <?php _e( 'Reviews', 'dokan' ); ?></div>
 
                     <ul class="list-unstyled list-count">
                         <li>
@@ -133,26 +139,12 @@ $reviews_url    = dokan_get_navigation_url( 'reviews' );
                     </ul>
                 </div> <!-- .reviews -->
 
-            </div> <!-- .col-md-6 -->
-
-            <div class="dokan-w6 dokan-dash-right">
-                <div class="dashboard-widget sells-graph">
-                    <div class="widget-title"><i class="fa fa-credit-card"></i> <?php _e( 'Sales', 'dokan' ); ?></div>
-
-                    <?php
-                    require_once DOKAN_DIR . '/includes/reports.php';
-
-                    dokan_dashboard_sales_overview();
-                    ?>
-                </div> <!-- .sells-graph -->
-
-
                 <div class="dashboard-widget products">
                     <div class="widget-title">
                         <i class="icon-briefcase"></i> <?php _e( 'Products', 'dokan' ); ?>
 
                         <span class="pull-right">
-                            <a href="<?php echo dokan_get_navigation_url( 'new-product' ); ?>" class="btn btn-theme btn-sm"><?php _e( '+ Add new product', 'dokan' ); ?></a>
+                            <a href="<?php echo dokan_get_navigation_url( 'new-product' ); ?>"><?php _e( '+ Add new product', 'dokan' ); ?></a>
                         </span>
                     </div>
 
@@ -178,6 +170,61 @@ $reviews_url    = dokan_get_navigation_url( 'reviews' );
                             </a>
                         </li>
                     </ul>
+                </div> <!-- .products -->
+
+            </div> <!-- .col-md-6 -->
+
+            <div class="dokan-w6 dokan-dash-right">
+                <div class="dashboard-widget sells-graph">
+                    <div class="widget-title"><i class="fa fa-credit-card"></i> <?php _e( 'Sales', 'dokan' ); ?></div>
+
+                    <?php
+                    require_once DOKAN_DIR . '/includes/reports.php';
+
+                    dokan_dashboard_sales_overview();
+                    ?>
+                </div> <!-- .sells-graph -->
+
+                <div class="dashboard-widget dokan-announcement-widget">
+                    <div class="widget-title">
+                        <i class="icon-briefcase"></i> <?php _e( 'Latest Announcement', 'dokan' ); ?>
+
+                        <span class="pull-right">
+                            <a href="<?php echo dokan_get_navigation_url( 'announcement' ); ?>"><?php _e( 'See All', 'dokan' ); ?></a>
+                        </span>
+                    </div>
+                    <?php
+                        $template_notice = Dokan_Template_Notice::init();
+                        $query = $template_notice->get_announcement_by_users(3);
+                    ?>
+                    <?php if ( $query->posts ): ?>
+                        <ul class="list-unstyled">
+                            <?php foreach ( $query->posts as $notice ): ?>
+                                <?php
+                                    $notice_url =  trailingslashit( dokan_get_navigation_url( 'single-announcement' ).''.$notice->ID );
+                                 ?>
+                                <li>
+                                    <div class="dokan-dashboard-announce-content dokan-left">
+                                        <a href="<?php echo $notice_url; ?>"><h3><?php echo $notice->post_title; ?></h3></a>
+                                        <?php echo wp_trim_words( $notice->post_content, 6, '...' ); ?>
+                                    </div>
+                                    <div class="dokan-dashboard-announce-date dokan-right <?php echo ( $notice->status == 'unread' ) ? 'dokan-dashboard-announce-unread' : 'dokan-dashboard-announce-read'; ?>">
+                                        <div class="announce-day"><?php echo date( 'd', strtotime( $notice->post_date ) ); ?></div>
+                                        <div class="announce-month"><?php echo date( 'l', strtotime( $notice->post_date ) ); ?></div>
+                                        <div class="announce-year"><?php echo date( 'Y', strtotime( $notice->post_date ) ); ?></div>
+                                    </div>
+                                    <div class="dokan-clearfix"></div>
+                                </li>
+                            <?php endforeach ?>
+                        </ul>
+                    <?php else: ?>
+                        <div class="dokan-no-announcement">
+                            <div class="annoument-no-wrapper">
+                                <i class="fa fa-bell dokan-announcement-icon"></i>
+                                <p><?php _e( 'No announcement found', 'dokan' ) ?></p>
+                            </div>
+                        </div>
+                    <?php endif ?>
                 </div> <!-- .products -->
 
             </div>

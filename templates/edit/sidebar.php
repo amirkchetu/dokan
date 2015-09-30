@@ -1,4 +1,9 @@
+<?php
+global $post;
 
+$_downloadable   = get_post_meta( $post->ID, '_downloadable', true );
+
+?>
 <div class="update-button-wrap">
     <input type="submit" name="update_product" class="dokan-btn dokan-btn-theme dokan-btn-lg" value="<?php esc_attr_e( 'Update Product', 'dokan' ); ?>"/>
 </div>
@@ -121,13 +126,13 @@
             <li class="dokan-form-group">
                 <div class="dokan-input-group">
                     <span class="dokan-input-group-addon"><?php _e( 'Limit', 'dokan' ); ?></span>
-                    <?php dokan_post_input_box( $post->ID, '_download_limit', array( 'placeholder' => __( 'Download Limit. e.g: 4', 'dokan' ) ) ); ?>
+                    <?php dokan_post_input_box( $post->ID, '_download_limit', array( 'placeholder' => __( 'Number of times', 'dokan' ), 'min' => 1, 'step' => 1 ), 'number' ); ?>
                 </div>
             </li>
             <li class="dokan-form-group">
                 <div class="dokan-input-group">
                     <span class="dokan-input-group-addon">Expiry</span>
-                    <?php dokan_post_input_box( $post->ID, '_download_expiry', array( 'placeholder' => __( 'Number of days', 'dokan' ) ) ); ?>
+                    <?php dokan_post_input_box( $post->ID, '_download_expiry', array( 'placeholder' => __( 'Number of days', 'dokan' ), 'min' => 1, 'step' => 1 ), 'number' ); ?>
                 </div>
             </li>
         </ul>
@@ -145,7 +150,7 @@
         <div id="product_images_container">
             <ul class="product_images dokan-clearfix">
                 <?php
-                $product_images = get_post_meta( $post_id, '_product_image_gallery', true );
+                $product_images = get_post_meta( $post->ID, '_product_image_gallery', true );
                 $gallery = explode( ',', $product_images );
 
                 if ( $gallery ) {

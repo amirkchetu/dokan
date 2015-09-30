@@ -6,6 +6,7 @@
  *
  * @package dokan
  */
+
 if ( ! function_exists( 'dokan_content_nav' ) ) :
 
 /**
@@ -36,7 +37,6 @@ function dokan_content_nav( $nav_id, $query = null ) {
         $nav_class = 'site-navigation post-navigation';
     ?>
     <nav role="navigation" id="<?php echo $nav_id; ?>" class="<?php echo $nav_class; ?>">
-        <h1 class="assistive-text"><?php _e( 'Post navigation', 'dokan' ); ?></h1>
 
         <ul class="pager">
         <?php if ( is_single() ) : // navigation links for single posts  ?>
@@ -177,41 +177,113 @@ function dokan_order_listing_status_filter() {
 
     $status_class = isset( $_GET['order_status'] ) ? $_GET['order_status'] : 'all';
     $orders_counts = dokan_count_orders( get_current_user_id() );
+    $order_date = ( isset( $_GET['order_date'] ) ) ? $_GET['order_date'] : '';
+    $date_filter = array();
+    $all_order_url = array();
+    $complete_order_url = array();
+    $processing_order_url = array();
+    $pending_order_url = array();
+    $on_hold_order_url = array();
+    $canceled_order_url = array();
+    $refund_order_url = array();
     ?>
 
     <ul class="list-inline order-statuses-filter">
         <li<?php echo $status_class == 'all' ? ' class="active"' : ''; ?>>
-            <a href="<?php echo $orders_url; ?>">
+            <?php
+                if( $order_date ) {
+                    $date_filter = array(
+                        'order_date' => $order_date,
+                        'dokan_order_filter' => 'Filter',
+                    );
+                }
+                $all_order_url = array_merge( $date_filter, array( 'order_status' => 'all' ) );
+            ?>
+            <a href="<?php echo ( empty( $all_order_url ) ) ? $orders_url : add_query_arg( $complete_order_url, $orders_url ); ?>">
                 <?php printf( __( 'All (%d)', 'dokan' ), $orders_counts->total ); ?></span>
             </a>
         </li>
         <li<?php echo $status_class == 'wc-completed' ? ' class="active"' : ''; ?>>
-            <a href="<?php echo add_query_arg( array( 'order_status' => 'wc-completed' ), $orders_url ); ?>">
+            <?php
+                if( $order_date ) {
+                    $date_filter = array(
+                        'order_date' => $order_date,
+                        'dokan_order_filter' => 'Filter',
+                    );
+                }
+                $complete_order_url = array_merge( array( 'order_status' => 'wc-completed' ), $date_filter );
+            ?>
+            <a href="<?php echo add_query_arg( $complete_order_url, $orders_url ); ?>">
                 <?php printf( __( 'Completed (%d)', 'dokan' ), $orders_counts->{'wc-completed'} ); ?></span>
             </a>
         </li>
         <li<?php echo $status_class == 'wc-processing' ? ' class="active"' : ''; ?>>
-            <a href="<?php echo add_query_arg( array( 'order_status' => 'wc-processing' ), $orders_url ); ?>">
+            <?php
+                if( $order_date ) {
+                    $date_filter = array(
+                        'order_date' => $order_date,
+                        'dokan_order_filter' => 'Filter',
+                    );
+                }
+                $processing_order_url = array_merge( $date_filter, array( 'order_status' => 'wc-processing' ) );
+            ?>
+            <a href="<?php echo add_query_arg( $processing_order_url, $orders_url ); ?>">
                 <?php printf( __( 'Processing (%d)', 'dokan' ), $orders_counts->{'wc-processing'} ); ?></span>
             </a>
         </li>
         <li<?php echo $status_class == 'wc-on-hold' ? ' class="active"' : ''; ?>>
-            <a href="<?php echo add_query_arg( array( 'order_status' => 'wc-on-hold' ), $orders_url ); ?>">
+            <?php
+                if( $order_date ) {
+                    $date_filter = array(
+                        'order_date' => $order_date,
+                        'dokan_order_filter' => 'Filter',
+                    );
+                }
+                $on_hold_order_url = array_merge( $date_filter, array( 'order_status' => 'wc-on-hold' ) );
+            ?>
+            <a href="<?php echo add_query_arg( $on_hold_order_url, $orders_url ); ?>">
                 <?php printf( __( 'On-hold (%d)', 'dokan' ), $orders_counts->{'wc-on-hold'} ); ?></span>
             </a>
         </li>
         <li<?php echo $status_class == 'wc-pending' ? ' class="active"' : ''; ?>>
-            <a href="<?php echo add_query_arg( array( 'order_status' => 'wc-pending' ), $orders_url ); ?>">
+            <?php
+                if( $order_date ) {
+                    $date_filter = array(
+                        'order_date' => $order_date,
+                        'dokan_order_filter' => 'Filter',
+                    );
+                }
+                $pending_order_url = array_merge( $date_filter, array( 'order_status' => 'wc-pending' ) );
+            ?>
+            <a href="<?php echo add_query_arg( $pending_order_url, $orders_url ); ?>">
                 <?php printf( __( 'Pending (%d)', 'dokan' ), $orders_counts->{'wc-pending'} ); ?></span>
             </a>
         </li>
         <li<?php echo $status_class == 'wc-canceled' ? ' class="active"' : ''; ?>>
-            <a href="<?php echo add_query_arg( array( 'order_status' => 'wc-cancelled' ), $orders_url ); ?>">
+            <?php
+                if( $order_date ) {
+                    $date_filter = array(
+                        'order_date' => $order_date,
+                        'dokan_order_filter' => 'Filter',
+                    );
+                }
+                $canceled_order_url = array_merge( $date_filter, array( 'order_status' => 'wc-cancelled' ) );
+            ?>
+            <a href="<?php echo add_query_arg( $canceled_order_url, $orders_url ); ?>">
                 <?php printf( __( 'Cancelled (%d)', 'dokan' ), $orders_counts->{'wc-cancelled'} ); ?></span>
             </a>
         </li>
         <li<?php echo $status_class == 'wc-refunded' ? ' class="active"' : ''; ?>>
-            <a href="<?php echo add_query_arg( array( 'order_status' => 'wc-refunded' ), $orders_url ); ?>">
+            <?php
+                if( $order_date ) {
+                    $date_filter = array(
+                        'order_date' => $order_date,
+                        'dokan_order_filter' => 'Filter',
+                    );
+                }
+                $refund_order_url = array_merge( $date_filter, array( 'order_status' => 'wc-refunded' ) );
+            ?>
+            <a href="<?php echo add_query_arg( $refund_order_url, $orders_url ); ?>">
                 <?php printf( __( 'Refunded (%d)', 'dokan' ), $orders_counts->{'wc-refunded'} ); ?></span>
             </a>
         </li>
@@ -219,60 +291,150 @@ function dokan_order_listing_status_filter() {
     <?php
 }
 
+/**
+ * Dashboard Navigation menus
+ *
+ * @return array
+ */
 function dokan_get_dashboard_nav() {
+
     $urls = array(
         'dashboard' => array(
             'title' => __( 'Dashboard', 'dokan'),
-            'icon'  => '<i class="dokan-icon-dashboard"></i>',
+            'icon'  => '<i class="fa fa-tachometer"></i>',
             'url'   => dokan_get_navigation_url()
         ),
         'product' => array(
             'title' => __( 'Products', 'dokan'),
-            'icon'  => '<i class="dokan-icon-briefcase"></i>',
+            'icon'  => '<i class="fa fa-briefcase"></i>',
             'url'   => dokan_get_navigation_url( 'products' )
         ),
         'order' => array(
             'title' => __( 'Orders', 'dokan'),
-            'icon'  => '<i class="dokan-icon-basket"></i>',
+            'icon'  => '<i class="fa fa-shopping-cart"></i>',
             'url'   => dokan_get_navigation_url( 'orders' )
         ),
         'coupon' => array(
             'title' => __( 'Coupons', 'dokan'),
-            'icon'  => '<i class="dokan-icon-gift"></i>',
+            'icon'  => '<i class="fa fa-gift"></i>',
             'url'   => dokan_get_navigation_url( 'coupons' )
         ),
         'report' => array(
             'title' => __( 'Reports', 'dokan'),
-            'icon'  => '<i class="dokan-icon-stats"></i>',
+            'icon'  => '<i class="fa fa-line-chart"></i>',
             'url'   => dokan_get_navigation_url( 'reports' )
         ),
         'reviews' => array(
             'title' => __( 'Reviews', 'dokan'),
-            'icon'  => '<i class="dokan-icon-bubbles"></i>',
+            'icon'  => '<i class="fa fa-comments-o"></i>',
             'url'   => dokan_get_navigation_url( 'reviews' )
         ),
         'withdraw' => array(
             'title' => __( 'Withdraw', 'dokan'),
-            'icon'  => '<i class="dokan-icon-upload"></i>',
+            'icon'  => '<i class="fa fa-upload"></i>',
             'url'   => dokan_get_navigation_url( 'withdraw' )
-        ),
-        'settings' => array(
-            'title' => __( 'Settings', 'dokan'),
-            'icon'  => '<i class="dokan-icon-cog"></i>',
-            'url'   => dokan_get_navigation_url( 'settings' )
         ),
     );
 
-    return apply_filters( 'dokan_get_dashboard_nav', $urls );
+    $urls = apply_filters( 'dokan_get_dashboard_nav', $urls );
+
+    $settings = array(
+        'title' => __( 'Settings <i class="fa fa-angle-right pull-right"></i>', 'dokan'),
+        'icon'  => '<i class="fa fa-cog"></i>',
+        'url'   => dokan_get_navigation_url( 'settings/store' )
+    );
+
+    $settings_sub = array(
+        'back' => array(
+            'title' => __( 'Back to Dashboard', 'dokan'),
+            'icon'  => '<i class="fa fa-long-arrow-left"></i>',
+            'url'   => dokan_get_navigation_url()
+        ),
+        'store' => array(
+            'title' => __( 'Store', 'dokan'),
+            'icon'  => '<i class="fa fa-university"></i>',
+            'url'   => dokan_get_navigation_url( 'settings/store' )
+        ),
+        'payment' => array(
+            'title' => __( 'Payment', 'dokan'),
+            'icon'  => '<i class="fa fa-credit-card"></i>',
+            'url'   => dokan_get_navigation_url( 'settings/payment' )
+        )
+    );
+
+    $dokan_shipping_option = get_option( 'woocommerce_dokan_product_shipping_settings' );
+    $enable_shipping       = ( isset( $dokan_shipping_option['enabled'] ) ) ? $dokan_shipping_option['enabled'] : 'yes';
+    
+    if ( $enable_shipping == 'yes' ) {
+        $settings_sub['shipping'] = array(
+            'title' => __( 'Shipping', 'dokan'),
+            'icon'  => '<i class="fa fa-truck"></i>',
+            'url'   => dokan_get_navigation_url( 'settings/shipping' )
+        );
+    }
+    $settings_sub['social'] = array(
+        'title' => __( 'Social Profile', 'dokan'),
+        'icon'  => '<i class="fa fa-share-alt-square"></i>',
+        'url'   => dokan_get_navigation_url( 'settings/social' )
+    );
+    if ( dokan_get_option( 'store_seo', 'dokan_general', 'on' ) === 'on' ) {
+        $settings_sub['seo'] = array(
+            'title' => __( 'Store SEO', 'dokan' ),
+            'icon'  => '<i class="fa fa-globe"></i>',
+            'url'   => dokan_get_navigation_url( 'settings/seo' )
+        );
+    }
+    
+    /**
+     * Filter to get the seller dashboard settings navigation.
+     *
+     * @since 2.2
+     *
+     * @param array.
+     */
+    $settings['sub']  = apply_filters( 'dokan_get_dashboard_settings_nav', $settings_sub );
+
+    $urls['settings'] = $settings;
+
+    /**
+     * Filter to get the final seller dashboard navigation.
+     *
+     * @since 2.2
+     *
+     * @param array $urls.
+     */
+    return apply_filters( 'dokan_get_seller_dashboard_nav', $urls );
 }
 
-function dokan_dashboard_nav( $active_menu ) {
-    $urls = dokan_get_dashboard_nav();
+/**
+ * Renders the Dokan dashboard menu
+ *
+ * For settings menu, the active menu format is `settings/menu_key_name`.
+ * The active menu will be splitted at `/` and the `menu_key_name` will be matched
+ * with settings sub menu array. If it's a match, the settings menu will be shown
+ * only. Otherwise the main navigation menu will be shown.
+ *
+ * @param  string  $active_menu
+ *
+ * @return string rendered menu HTML
+ */
+function dokan_dashboard_nav( $active_menu = '' ) {
+
+    $nav_menu          = dokan_get_dashboard_nav();
+    $active_menu_parts = explode( '/', $active_menu );
+
+    if ( isset( $active_menu_parts[1] ) && $active_menu_parts[0] == 'settings' && array_key_exists( $active_menu_parts[1], $nav_menu['settings']['sub'] ) ) {
+        $urls        = $nav_menu['settings']['sub'];
+        $active_menu = $active_menu_parts[1];
+    } else {
+        $urls = $nav_menu;
+    }
+
     $menu = '<ul class="dokan-dashboard-menu">';
 
     foreach ($urls as $key => $item) {
-        $class = ( $active_menu == $key ) ? ' class="active"' : '';
-        $menu .= sprintf( '<li%s><a href="%s">%s %s</a></li>', $class, $item['url'], $item['icon'], $item['title'] );
+        $class = ( $active_menu == $key ) ? 'active ' . $key : $key;
+        $menu .= sprintf( '<li class="%s"><a href="%s">%s %s</a></li>', $class, $item['url'], $item['icon'], $item['title'] );
     }
     $menu .= '</ul>';
 
@@ -328,16 +490,23 @@ function dokan_store_category_menu( $seller_id, $title = '' ) { ?>
 
 endif;
 
-
+/**
+ * Clear transient once a product is saved or deleted
+ *
+ * @param  int $post_id
+ *
+ * @return void
+ */
 function dokan_store_category_delete_transient( $post_id ) {
 
-    $post_tmp = get_post($post_id);
+    $post_tmp = get_post( $post_id );
     $seller_id = $post_tmp->post_author;
+
     //delete store category transient
     delete_transient( 'dokan-store-category-'.$seller_id );
 }
 
-add_action( 'deleted_post', 'dokan_store_category_delete_transient' );
+add_action( 'delete_post', 'dokan_store_category_delete_transient' );
 add_action( 'save_post', 'dokan_store_category_delete_transient' );
 
 
@@ -351,7 +520,7 @@ function dokan_seller_reg_form_fields() {
     <div class="show_if_seller"<?php echo $role_style; ?>>
 
         <div class="split-row form-row-wide">
-            <p class="form-row form-group">            
+            <p class="form-row form-group">
                 <label for="first-name"><?php _e( 'First Name', 'dokan' ); ?> <span class="required">*</span></label>
                 <input type="text" class="input-text form-control" name="fname" id="first-name" value="<?php if ( ! empty( $_POST['fname'] ) ) echo esc_attr($_POST['fname']); ?>" required="required" />
             </p>
@@ -370,23 +539,15 @@ function dokan_seller_reg_form_fields() {
         <p class="form-row form-group form-row-wide">
             <label for="seller-url" class="pull-left"><?php _e( 'Shop URL', 'dokan' ); ?> <span class="required">*</span></label>
             <strong id="url-alart-mgs" class="pull-right"></strong>
-            <input type="text" class="input-text form-control clear" name="shopurl" id="seller-url" value="<?php if ( ! empty( $_POST['shopurl'] ) ) echo esc_attr($_POST['shopurl']); ?>" required="required" />
-            <small><?php echo home_url(); ?>/store/<strong id="url-alart"></strong></small>
+            <input type="text" class="input-text form-control" name="shopurl" id="seller-url" value="<?php if ( ! empty( $_POST['shopurl'] ) ) echo esc_attr($_POST['shopurl']); ?>" required="required" />
+            <small><?php echo home_url() . '/' . dokan_get_option( 'custom_store_url', 'dokan_selling', 'store' ); ?>/<strong id="url-alart"></strong></small>
         </p>
 
         <p class="form-row form-group form-row-wide">
             <label for="shop-phone"><?php _e( 'Phone', 'dokan' ); ?><span class="required">*</span></label>
             <input type="text" class="input-text form-control" name="phone" id="shop-phone" value="<?php if ( ! empty( $_POST['phone'] ) ) echo esc_attr($_POST['phone']); ?>" required="required" />
         </p>
-        <!--p class="form-row form-group form-row-wide">
-            <label for="billing_address_1"><?php _e( 'Address Line 1', 'dokan' ); ?><span class="required">*</span></label>
-            <input type="text" class="input-text form-control" name="billing_address_1" id="billing_address_1" value="" required="required" />
-        </p>
-        <p class="form-row form-group form-row-wide">
-            <label for="billing_address_2"><?php _e( 'Address Line 2', 'dokan' ); ?><span class="required">*</span></label>
-            <input type="text" class="input-text form-control" name="billing_address_2" id="billing_address_2" value="" required="required" />
-        </p-->
-        <script>var stt = new Array();</script>
+		<script>var stt = new Array();</script>
 		<?php
         global $wpdb;
         $mycity = $wpdb->prefix . "mycity";
@@ -440,28 +601,32 @@ function dokan_seller_reg_form_fields() {
 			});
 		});
 		</script>
-        <!--p class="form-row form-group form-row-wide">        
-        	<label for="billing_postcode"><?php _e( 'Post Code', 'dokan' ); ?><span class="required">*</span></label>
-            <input type="text" class="input-text form-control" name="billing_postcode" id="billing_postcode" value="<?php if ( ! empty( $_POST['billing_postcode'] ) ) echo esc_attr($_POST['billing_postcode']); ?>"-->
-        </p>
+        <?php  do_action( 'dokan_seller_registration_field_after' ); ?>
+
     </div>
+
+    <?php do_action( 'dokan_reg_form_field' ); ?>
 
     <p class="form-row form-group user-role" style="display:none">
         <label class="radio">
-            <input type="radio" name="role" value="customer"<?php checked( $role, 'customer' ); ?>>
+            <input type="radio" name="role" value="customer"<?php checked( $role, 'customer' ); ?> checked="checked">
             <?php _e( 'I am a customer', 'dokan' ); ?>
         </label>
 
         <label class="radio">
-            <input type="radio" name="role" value="seller"<?php checked( $role, 'seller' ); ?> checked="checked">
+            <input type="radio" name="role" value="seller"<?php checked( $role, 'seller' ); ?>>
             <?php _e( 'I am a seller', 'dokan' ); ?>
         </label>
+        <?php do_action( 'dokan_registration_form_role', $role ); ?>
     </p>
+
     <?php
-	}	
+	}
 }
+
 add_action( 'register_form', 'dokan_seller_reg_form_fields' );
-//add_action( 'register_form', 'dokan_seller_reg_form_fields' );
+
+//May Not Need
 function register_user(){
 	if(isset($_REQUEST['email']) && isset($_REQUEST['password'])):
 		$user_name = $user_email = isset($_REQUEST['email'])?$_REQUEST['email']:'';
@@ -491,9 +656,8 @@ function register_user(){
 		endif;
 }
 add_action('before_page','register_user');
+
 //Updating use meta after registration successful registration
-//add_action('woocommerce_created_customer','adding_extra_reg_fields');
-add_action('user_register','adding_extra_reg_fields');
 function adding_extra_reg_fields($user_id) {
 	extract($_POST);
 	    $dokan_settings = array(
@@ -520,7 +684,8 @@ function adding_extra_reg_fields($user_id) {
 	update_user_meta($user_id, 'billing_first_name', $_POST['fname']);	
 	update_user_meta($user_id, 'billing_last_name', $_POST['lname']);	
 	update_user_meta($user_id, 'shipping_first_name', $_POST['fname']);	
-	update_user_meta($user_id, 'shipping_last_name', $_POST['lname']);	//update_user_meta($user_id, 'billing_postcode',$_POST['billing_postcode']);
+	update_user_meta($user_id, 'shipping_last_name', $_POST['lname']);	
+	//update_user_meta($user_id, 'billing_postcode',$_POST['billing_postcode']);
 	//update_user_meta($user_id, 'billing_address_1',$_POST['billing_address_1']);
 	//update_user_meta($user_id, 'billing_address_2',$_POST['billing_address_2']);
 	update_user_meta($user_id, 'billing_city',$_POST['billing_city']);
@@ -528,6 +693,7 @@ function adding_extra_reg_fields($user_id) {
 	update_user_meta($user_id, 'billing_phone',$_POST['phone']);
     Dokan_Email::init()->new_seller_registered_mail( $user_id );
 }
+add_action('user_register','adding_extra_reg_fields');
 
 function dokan_seller_not_enabled_notice() {
     ?>
@@ -586,6 +752,7 @@ function dokan_header_user_menu() {
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo esc_html( $current_user->display_name ); ?> <b class="caret"></b></a>
                 <ul class="dropdown-menu">
+                    <li><a href="<?php echo dokan_get_page_url( 'my_orders' ); ?>"><?php _e( 'My Orders', 'dokan' ); ?></a></li>
                     <li><a href="<?php echo dokan_get_page_url( 'myaccount', 'woocommerce' ); ?>"><?php _e( 'My Account', 'dokan' ); ?></a></li>
                     <li><a href="<?php echo wc_customer_edit_account_url(); ?>"><?php _e( 'Edit Account', 'dokan' ); ?></a></li>
                     <li class="divider"></li>
@@ -611,9 +778,10 @@ function dokan_account_migration_button() {
 
     if ( dokan_is_user_customer( $user->ID ) ) {
         ?>
-        <div id="become-seller">
+        <p>&nbsp;</p>
+        <p>
             <a href="<?php echo dokan_get_page_url( 'myaccount', 'woocommerce' ); ?>account-migration/seller/" class="button button-primary"><?php _e( 'Become a Seller', 'dokan' ); ?></a>
-        </div>
+        </p>
         <?php
     }
 }

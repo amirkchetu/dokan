@@ -21,23 +21,50 @@ class Dokan_Admin_Settings {
         add_action( 'admin_init', array($this, 'tools_page_handler') );
 
         add_action( 'admin_menu', array($this, 'admin_menu') );
-
         add_action( 'admin_notices', array($this, 'update_notice' ) );
     }
 
+    /**
+     * Dashboard scripts and styles
+     *
+     * @return void
+     */
     function dashboard_script() {
         wp_enqueue_style( 'dokan-admin-dash', DOKAN_PLUGIN_ASSEST . '/css/admin.css' );
+
         $this->report_scripts();
     }
 
+    /**
+     * Reporting scripts
+     *
+     * @return void
+     */
     function report_scripts() {
-
         wp_enqueue_style( 'dokan-admin-report', DOKAN_PLUGIN_ASSEST . '/css/admin.css' );
         wp_enqueue_style( 'jquery-ui' );
+        wp_enqueue_style( 'dokan-chosen-style' );
 
         wp_enqueue_script( 'jquery-ui-datepicker' );
         wp_enqueue_script( 'jquery-flot' );
         wp_enqueue_script( 'jquery-chart' );
+        wp_enqueue_script( 'chosen' );
+    }
+
+    /**
+     * Seller announcement scripts
+     *
+     * @since 2.1
+     *
+     * @return void
+     */
+    function announcement_scripts() {
+        global $post_type;
+
+        if ( 'dokan_announcement' == $post_type ) {
+            wp_enqueue_style( 'dokan-chosen-style' );
+            wp_enqueue_script( 'chosen' );
+        }
     }
 
     function admin_init() {
@@ -66,6 +93,7 @@ class Dokan_Admin_Settings {
         add_submenu_page( 'dokan', __( 'Withdraw', 'dokan' ), $withdraw_text, $capability, 'dokan-withdraw', array($this, 'withdraw_page') );
         add_submenu_page( 'dokan', __( 'Sellers Listing', 'dokan' ), __( 'All Sellers', 'dokan' ), $capability, 'dokan-sellers', array($this, 'seller_listing') );
         $report = add_submenu_page( 'dokan', __( 'Earning Reports', 'dokan' ), __( 'Earning Reports', 'dokan' ), $capability, 'dokan-reports', array($this, 'report_page') );
+        $announcement = add_submenu_page( 'dokan', __( 'Announcement', 'dokan' ), __( 'Announcement', 'dokan' ), $capability, 'edit.php?post_type=dokan_announcement' );
 
         do_action( 'dokan_admin_menu' );
 
@@ -75,6 +103,10 @@ class Dokan_Admin_Settings {
 
         add_action( $dashboard, array($this, 'dashboard_script' ) );
         add_action( $report, array($this, 'report_scripts' ) );
+        // add_action( $announcement, array($this, 'announcement_scripts' ) );
+        add_action( 'admin_print_scripts-post-new.php', array( $this, 'announcement_scripts' ), 11 );
+        add_action( 'admin_print_scripts-post.php', array( $this, 'announcement_scripts' ), 11 );
+
     }
 
     function get_settings_sections() {
@@ -140,14 +172,64 @@ class Dokan_Admin_Settings {
                     'type'    => 'checkbox',
                     'default' => 'on'
                 ),
+                'enable_theme_store_sidebar' => array(
+                    'name'    => 'enable_theme_store_sidebar',
+                    'label'   => __( 'Enable Store Sidebar From Theme', 'dokan' ),
+                    'desc'    => __( 'Enable showing Store Sidebar From Your Theme.', 'dokan' ),
+                    'type'    => 'checkbox',
+                    'default' => 'off'
+                ),
+                'product_add_mail' => array(
+                    'name'    => 'product_add_mail',
+                    'label'   => __( 'Product Mail Notification', 'dokan' ),
+                    'desc'    => __( 'Email notification on new product submission', 'dokan' ),
+                    'type'    => 'checkbox',
+                    'default' => 'on'
+                ),
+                'store_seo' => array(
+                    'name'    => 'store_seo',
+                    'label'   => __( 'Enable Store SEO', 'dokan' ),
+                    'desc'    => __( 'Sellers can manage their Store page SEO', 'dokan' ),
+                    'type'    => 'checkbox',
+                    'default' => 'on'
+                ),
             ),
             'dokan_selling' => array(
+                'seller_enable_terms_and_conditions' => array(
+                    'name'    => 'seller_enable_terms_and_conditions',
+                    'label'   => __( 'Terms and Conditions', 'dokan' ),
+                    'desc'    => __( 'Enable terms and conditions for seller store', 'dokan' ),
+                    'type'    => 'checkbox',
+                    'default' => 'off'
+                 ),
                 'new_seller_enable_selling' => array(
                     'name'    => 'new_seller_enable_selling',
                     'label'   => __( 'New Seller Enable Selling', 'dokan' ),
                     'desc'    => __( 'Make selling status enable for new registred seller', 'dokan' ),
                     'type'    => 'checkbox',
                     'default' => 'on'
+                ),
+                'product_style' => array(
+                    'name'    => 'product_style',
+                    'label'   => __( 'Add/Edit Product Style', 'dokan' ),
+                    'desc'    => __( 'The style you prefer for seller to add or edit products. ', 'dokan' ),
+                    'type'    => 'select',
+                    'default' => 'old',
+                    'options' => array(
+                        'old' => __( 'Tab View', 'dokan' ),
+                        'new' => __( 'Flat View', 'dokan' )
+                    )
+                ),
+                'product_category_style' => array(
+                    'name'    => 'product_category_style',
+                    'label'   => __( 'Category Selection', 'dokan' ),
+                    'desc'    => __( 'What option do you prefer for seller to select product category? ', 'dokan' ),
+                    'type'    => 'select',
+                    'default' => 'single',
+                    'options' => array(
+                        'single' => __( 'Single', 'dokan' ),
+                        'multiple' => __( 'Multiple', 'dokan' )
+                    )
                 ),
                 'product_status' => array(
                     'name'    => 'product_status',
@@ -197,6 +279,20 @@ class Dokan_Admin_Settings {
                     'default' => '50',
                     'type'    => 'text',
                 ),
+                'withdraw_date_limit' => array(
+                    'name'    => 'withdraw_date_limit',
+                    'label'   => __( 'Withdraw Threshold', 'dokan' ),
+                    'desc'    => __( 'Days, ( Make order matured to make a withdraw request) <br> Value "0" will inactive this option', 'dokan' ),
+                    'default' => '0',
+                    'type'    => 'text',
+                ),
+                'custom_store_url' => array(
+                    'name'    => 'custom_store_url',
+                    'label'   => __( 'Seller Store URL', 'dokan' ),
+                    'desc'    => sprintf( __( 'Define seller store URL (%s<strong>[this-text]</strong>/[seller-name])', 'dokan' ), site_url( '/' ) ),
+                    'default' => 'store',
+                    'type'    => 'text',
+                ),
                 'review_edit' => array(
                     'name'    => 'review_edit',
                     'label'   => __( 'Review Editing', 'dokan' ),
@@ -209,6 +305,12 @@ class Dokan_Admin_Settings {
                 'dashboard' => array(
                     'name'    => 'dashboard',
                     'label'   => __( 'Dashboard', 'dokan' ),
+                    'type'    => 'select',
+                    'options' => $pages_array
+                ),
+                'my_orders' => array(
+                    'name'    => 'my_orders',
+                    'label'   => __( 'My Orders', 'dokan' ),
                     'type'    => 'select',
                     'options' => $pages_array
                 )

@@ -136,7 +136,7 @@ class Dokan_Template_reviews {
 
             <?php wp_nonce_field( 'wpuf_comment_nonce', 'wpuf_nonce' ); ?>
 
-            <input type="submit" value="<?php _e( 'Submit', 'dokan' ); ?>" class="btn btn-theme btn-sm" name="comt_stat_sub">
+            <input type="submit" value="<?php _e( 'Submit', 'dokan' ); ?>" class="dokan-btn  dokan-danger dokan-btn-theme dokan-btn-sm" name="comt_stat_sub">
         </form>
 
         <script type="text/template" id="dokan-edit-comment-row">
@@ -210,10 +210,12 @@ class Dokan_Template_reviews {
 
         $pagenum      = isset( $_GET['pagenum'] ) ? absint( $_GET['pagenum'] ) : 1;
         $num_of_pages = ceil( $total / $this->limit );
+        $base_url = dokan_get_navigation_url( 'reviews' );
 
         $page_links = paginate_links( array(
-                'base'      => add_query_arg( 'pagenum', '%#%' ),
-                'format'    => '',
+                'base'      => $base_url. '%_%',
+                'format'    => '?pagenum=%#%',
+                'add_args'  => false,
                 'prev_text' => __( '&laquo;', 'aag' ),
                 'next_text' => __( '&raquo;', 'aag' ),
                 'total'     => $num_of_pages,

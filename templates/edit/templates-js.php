@@ -2,16 +2,13 @@
     <div class="inputs-box woocommerce_attribute" data-count="[<%= row %>]">
 
         <div class="box-header">
-			<select class="category-name" name="attribute_names[<%= row %>]">
-			   <option value="Brands">Brands</option>
-			   <option value="Size">Size</option>
-			   <option value="Color">Color</option>
-			</select>
+            <input type="text" class="category-name" placeholder="<?php esc_attr_e( 'Category name', 'dokan' ); ?>" name="attribute_names[<%= row %>]" value="">
+
             <input type="hidden" name="attribute_is_taxonomy[<%= row %>]" value="0">
-            <input type="hidden" name="attribute_position[<%= row %>]]" class="attribute_position" value="<%= row %>" />
+            <input type="hidden" name="attribute_position[<%= row %>]" class="attribute_position" value="<%= row %>" />
 
             <span class="actions">
-                <button class="row-remove btn pull-right btn-danger btn-sm">Remove</button>
+                <button class="row-remove btn pull-right btn-danger btn-sm"><?php _e( 'Remove', 'dokan' ); ?></button>
             </span>
         </div>
 
@@ -21,13 +18,13 @@
                 <ul class="list-unstyled ">
                     <li>
                         <label class="checkbox-inline">
-                            <input type="checkbox" class="checkbox" name="attribute_visibility[<%= row %>]" value="1" /> <?php _e( 'Visible on the product page', 'woocommerce' ); ?>
+                            <input type="checkbox" class="checkbox" name="attribute_visibility[<%= row %>]" value="1" /> <?php _e( 'Visible on the product page', 'dokan' ); ?>
                         </label>
                     </li>
 
                     <li class="enable_variation show_if_variable">
                         <label class="checkbox-inline">
-                            <input type="checkbox" class="checkbox" name="attribute_variation[<%= row %>]" value="1" /> <?php _e( 'Used for variations', 'woocommerce' ); ?>
+                            <input type="checkbox" class="checkbox" name="attribute_variation[<%= row %>]" value="1" /> <?php _e( 'Used for variations', 'dokan' ); ?>
                         </label>
                     </li>
                 </ul>
@@ -48,6 +45,7 @@
             </div> <!-- .attribute-options -->
 
         </div> <!-- .box-inside -->
+
     </div> <!-- .inputs-box -->
 </script>
 

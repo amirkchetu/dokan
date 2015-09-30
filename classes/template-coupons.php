@@ -60,12 +60,36 @@ class Dokan_Template_Coupons{
             $errors->add( 'products', __( 'Please specify any products', 'dokan' ) );
         }
 
+        $this->is_coupon_exist( $_POST['title'], $errors );
+
         if ( $errors->get_error_codes() ) {
             return $errors;
         }
 
         return true;
     }
+
+    /**
+    * Get the orders total from a specific seller
+    *
+    * @since version 3
+    *
+    * @param string $title
+    * @param object $error
+    * 
+    * @return object $error
+    */
+    function is_coupon_exist( $title, $errors ) {
+        $args = array( 'post_type' => 'shop_coupon', 'name' => $title );
+        $query = get_posts( $args );
+
+        if ( !empty( $query ) ) {
+            if ( empty( $_POST['post_id'] ) || $_POST['post_id'] != $query[0]->ID ) {
+                return $errors->add( 'duplicate', __( 'Coupon title already exists', 'dokan' ) );
+            }
+        }
+    }
+
 
     function coupons_create() {
 
@@ -112,7 +136,7 @@ class Dokan_Template_Coupons{
         $expiry_date = sanitize_text_field( $_POST['expire'] );
 
         $apply_before_tax = isset( $_POST['apply_before_tax'] ) ? 'yes' : 'no';
-        $free_shipping = isset( $_POST['enable_free_ship'] ) ? 'yes' : 'no';
+        // $free_shipping = isset( $_POST['enable_free_ship'] ) ? 'yes' : 'no';
         $exclude_sale_items = isset( $_POST['exclude_sale_items'] ) ? 'yes' : 'no';
         $minimum_amount = sanitize_text_field( $_POST['minium_ammount'] );
 
@@ -137,7 +161,7 @@ class Dokan_Template_Coupons{
         update_post_meta( $post_id, 'usage_limit', $usage_limit );
         update_post_meta( $post_id, 'expiry_date', $expiry_date );
         update_post_meta( $post_id, 'apply_before_tax', $apply_before_tax );
-        update_post_meta( $post_id, 'free_shipping', $free_shipping );
+        update_post_meta( $post_id, 'free_shipping', 'no' );
         update_post_meta( $post_id, 'exclude_sale_items', $exclude_sale_items );
         update_post_meta( $post_id, 'minimum_amount', $minimum_amount );
         update_post_meta( $post_id, 'customer_email', $customer_email );
@@ -241,7 +265,7 @@ class Dokan_Template_Coupons{
                         </div>
 
                         <div class="row-actions">
-                            <?php $del_url = wp_nonce_url( add_query_arg( array('post' => $post->ID, 'action' => 'delete'), get_permalink() ) ,'_coupon_del_nonce', 'coupon_del_nonce'); ?>
+                            <?php $del_url = wp_nonce_url( add_query_arg( array('post' => $post->ID, 'action' => 'delete'), dokan_get_navigation_url( 'coupons' ) ) ,'_coupon_del_nonce', 'coupon_del_nonce'); ?>
 
                             <span class="edit"><a href="<?php echo $edit_url; ?>"><?php _e( 'Edit', 'dokan' ); ?></a> | </span>
                             <span class="delete"><a  href="<?php echo $del_url; ?>"  onclick="return confirm('<?php esc_attr_e( 'Are you sure want to delete', 'dokan' ); ?>');"><?php _e('delete', 'dokan'); ?></a></span>
@@ -311,7 +335,7 @@ class Dokan_Template_Coupons{
             echo $this->pagination();
         } else {
             ?>
-            <p class="dokan-message"><?php _e( 'No coupons found!', 'dokan' ); ?></p>
+            <p class="dokan-error"><?php _e( 'No coupons found!', 'dokan' ); ?></p>
             <?php
         }
     }
@@ -320,18 +344,24 @@ class Dokan_Template_Coupons{
 
         $pagenum = isset( $_GET['pagenum'] ) ? absint( $_GET['pagenum'] ) : 1;
         $num_of_pages = ceil( $this->total_query_result / $this->perpage );
+        $base_url = dokan_get_navigation_url( 'coupons' );
 
         $page_links = paginate_links( array(
-            'base' => add_query_arg( 'pagenum', '%#%' ),
-            'format' => '',
+            'base'      => $base_url. '%_%',
+            'format'    => '?pagenum=%#%',
+            'add_args'  => false,
             'prev_text' => __( '&laquo;', 'aag' ),
             'next_text' => __( '&raquo;', 'aag' ),
             'total' => $num_of_pages,
-            'current' => $pagenum
+            'current' => $pagenum,
+            'type' => 'array'
         ) );
 
         if ( $page_links ) {
-            return '<div class="wpuf-pagination">' . $page_links . '</div>';
+            echo "<ul class='pagination'>\n\t<li>";
+            echo join("</li>\n\t<li>", $page_links);
+            echo "</li>\n</ul>\n";
+            echo '</div>';
         }
     }
 
@@ -362,7 +392,7 @@ class Dokan_Template_Coupons{
             $usage_limit       = get_post_meta( $post->ID, 'usage_limit', true );
             $expire            = get_post_meta( $post->ID, 'expiry_date', true );
             $apply_before_tax  = get_post_meta( $post->ID, 'apply_before_tax', true );
-            $free_shipping     = get_post_meta( $post->ID, 'free_shipping', true );
+            //$free_shipping     = get_post_meta( $post->ID, 'free_shipping', true );
             $exclide_sale_item = get_post_meta( $post->ID, 'exclude_sale_items', true );
             $minimum_amount    = get_post_meta( $post->ID, 'minimum_amount', true );
             $customer_email    = get_post_meta( $post->ID, 'customer_email', true );
@@ -374,7 +404,7 @@ class Dokan_Template_Coupons{
 
         $discount_type = isset( $discount_type ) ? $discount_type : '';
         if ( isset( $discount_type ) ) {
-            if ( $discount_type == 'coupon_percent_product' ) {
+            if ( $discount_type == 'percent_product' ) {
                 $discount_type = 'selected';
             }
         }
@@ -385,11 +415,11 @@ class Dokan_Template_Coupons{
         $usage_limit      = isset( $usage_limit ) ? $usage_limit : '';
         $expire           = isset( $expire ) ? $expire : '';
 
-        if ( isset( $free_shipping ) && $free_shipping == 'yes' ) {
-            $free_shipping = 'checked';
-        } else {
-            $free_shipping = '';
-        }
+        // if ( isset( $free_shipping ) && $free_shipping == 'yes' ) {
+        //     $free_shipping = 'checked';
+        // } else {
+        //     $free_shipping = '';
+        // }
 
         if ( isset( $apply_before_tax ) && $apply_before_tax == 'yes' ) {
             $apply_before_tax = 'checked';
@@ -415,7 +445,7 @@ class Dokan_Template_Coupons{
 
             $discount_type = $_POST['discount_type'];
 
-            if ( $discount_type == 'coupon_percent_product' ) {
+            if ( $discount_type == 'percent_product' ) {
                 $discount_type = 'selected';
             }
 
@@ -440,11 +470,11 @@ class Dokan_Template_Coupons{
 
 
 
-            if ( isset( $_POST['enable_free_ship'] ) && $_POST['enable_free_ship'] == 'yes' ) {
-                $free_shipping = 'checked';
-            } else {
-                $free_shipping = '';
-            }
+            // if ( isset( $_POST['enable_free_ship'] ) && $_POST['enable_free_ship'] == 'yes' ) {
+            //     $free_shipping = 'checked';
+            // } else {
+            //     $free_shipping = '';
+            // }
 
             if ( isset( $_POST['apply_before_tax'] ) && $_POST['apply_before_tax'] == 'yes' ) {
                 $apply_before_tax = 'checked';
@@ -500,7 +530,7 @@ class Dokan_Template_Coupons{
                 <div class="dokan-w5 dokan-text-left">
                     <select id="discount_type" name="discount_type" class="dokan-form-control">
                         <option value="fixed_product"><?php _e( 'Product Discount', 'dokan' ); ?></option>
-                        <option value="percent_product"><?php _e( 'Product % Discount', 'dokan' ); ?></option>
+                        <option value="percent_product" <?php echo $discount_type; ?> ><?php _e( 'Product % Discount', 'dokan' ); ?></option>
                     </select>
                 </div>
             </div>
@@ -567,18 +597,6 @@ class Dokan_Template_Coupons{
             </div>
 
             <div class="dokan-form-group">
-                <label class="dokan-w3 dokan-control-label" for="checkboxes"><?php _e( 'Enable Free Shipping', 'dokan' ); ?></label>
-                <div class="dokan-w6 dokan-text-left">
-                    <div class="checkbox">
-                        <label for="checkboxes-0">
-                            <input name="enable_free_ship" <?php echo $free_shipping; ?> id="checkboxes-0" value="yes" type="checkbox">
-                            <?php _e( 'Check this box if the coupon grants free shipping.', 'dokan' ); ?>
-                        </label>
-                    </div>
-                </div>
-            </div>
-
-            <div class="dokan-form-group">
                 <label class="dokan-w3 dokan-control-label" for="checkboxes"><?php _e( 'Exclude Sale Items', 'dokan' ); ?></label>
                 <div class="dokan-w7 dokan-text-left">
                     <div class="checkbox">
@@ -627,8 +645,8 @@ class Dokan_Template_Coupons{
             </div>
 
             <div class="dokan-form-group">
-                <div class="dokan-w5 ajax_prev dokan-text-left" style="margin-left:25%">
-                    <input type="submit" id="" name="coupon_creation" value="<?php echo $button_name; ?>" class="btn btn-theme">
+                <div class="dokan-w5 ajax_prev dokan-text-left" style="margin-left:23%">
+                    <input type="submit" id="" name="coupon_creation" value="<?php echo $button_name; ?>" class="dokan-btn dokan-btn-danger dokan-btn-theme">
                 </div>
             </div>
 

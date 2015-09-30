@@ -5,7 +5,7 @@ $counts = dokan_get_withdraw_count();
 $status = isset( $_GET['status'] ) ? $_GET['status'] : 'pending';
 ?>
 <div class="wrap">
-    <h2><?php _e( 'Withdraw Requests', 'dokan' ); ?></h2>
+    <h2><?php _e( 'Withdraw Requests - This Plugin Shared By WwW.Null24.IR', 'dokan' ); ?></h2>
 
     <ul class="subsubsub" style="float: none;">
         <li>

@@ -93,7 +93,7 @@ function dokan_admin_dash_metabox_glance() {
 ?>
 <div class="wrap dokan-dashboard">
 
-    <h2><?php _e( 'Dokan Dashboard', 'dokan' ); ?></h2>
+    <h2><?php _e( 'Dokan Dashboard - This Plugin Shared By WwW.Null24.IR', 'dokan' ); ?></h2>
 
     <div class="metabox-holder">
         <div class="post-box-container">
